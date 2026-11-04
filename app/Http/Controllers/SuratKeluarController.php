@@ -3,69 +3,61 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\OutcomingLetters;
 
 class SuratKeluarController extends Controller
 {
-    public function index()
-    {
-        $suratKeluar = [
-            [
-                'id' => 1,
-                'nomor_surat' => '001/FT/X/2026',
-                'tanggal' => '01-10-2026',
-                'pengirim' => 'Fakultas Teknik',
-                'perihal' => 'Undangan Rapat'
-            ],
-            [
-                'id' => 2,
-                'nomor_surat' => '002/BAA/X/2026',
-                'tanggal' => '02-10-2026',
-                'pengirim' => 'BAA',
-                'perihal' => 'Pemberitahuan Akademik'
-            ],
-            [
-                'id' => 3,
-                'nomor_surat' => '003/LPPM/X/2026',
-                'tanggal' => '03-10-2026',
-                'pengirim' => 'LPPM',
-                'perihal' => 'Undangan Sosialisasi'
-            ]
-        ];
-
+    public function index() {
+        $suratKeluar = OutcomingLetters::orderBy('id', 'desc')->get();
         return view('surat-keluar.index', compact('suratKeluar'));
     }
 
-    public function show($id)
-    {
-        $suratKeluar = [
-            1 => [
-                'id' => 1,
-                'nomor_surat' => '001/FT/X/2026',
-                'tanggal' => '01-10-2026',
-                'pengirim' => 'Fakultas Teknik',
-                'perihal' => 'Undangan Rapat',
-                'keterangan' => 'Undangan rapat koordinasi Fakultas Teknik'
-            ],
-            2 => [
-                'id' => 2,
-                'nomor_surat' => '002/BAA/X/2026',
-                'tanggal' => '02-10-2026',
-                'pengirim' => 'BAA',
-                'perihal' => 'Pemberitahuan Akademik',
-                'keterangan' => 'Pemberitahuan kegiatan akademik'
-            ],
-            3 => [
-                'id' => 3,
-                'nomor_surat' => '003/LPPM/X/2026',
-                'tanggal' => '03-10-2026',
-                'pengirim' => 'LPPM',
-                'perihal' => 'Undangan Sosialisasi',
-                'keterangan' => 'Undangan kegiatan sosialisasi penelitian'
-            ]
-        ];
+    public function create() {
+        return view('surat-keluar.create');
+    }
 
-        $surat = $suratKeluar[$id] ?? null;
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'nomor_surat' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'pengirim' => 'required|string|max:255',
+            'perihal' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
+        ]);
+        OutcomingLetters::create($validated);
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat berhasil ditambahkan.');
+    }
 
+    public function show($id) {
+        $surat = OutcomingLetters::findOrFail($id);
         return view('surat-keluar.show', compact('surat'));
+    }
+
+    public function edit($id) {
+        $surat = OutcomingLetters::findOrFail($id);
+        return view('surat-keluar.edit', compact('surat'));
+    }
+
+    public function update(Request $request, $id) {
+        $surat = OutcomingLetters::findOrFail($id);
+
+        $validated = $request->validate([
+            'nomor_surat' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'pengirim' => 'required|string|max:255',
+            'perihal' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        $surat->update($validated);
+
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat berhasil diperbarui.');
+    }
+
+    public function destroy($id) {
+        $surat = OutcomingLetters::findOrFail($id);
+        $surat->delete();
+
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat berhasil dihapus.');
     }
 }
