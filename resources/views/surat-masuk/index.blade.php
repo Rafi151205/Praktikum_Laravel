@@ -6,7 +6,9 @@
 <h1>Daftar Surat Masuk</h1>
 
 @can('manage-letters')
-    <a href="{{ route('surat-masuk.create') }}">+ Tambah Surat</a>
+    <a href="{{ route('surat-masuk.create') }}">
+        + Tambah Surat
+    </a>
 @endcan
 
 @if (session('success'))
