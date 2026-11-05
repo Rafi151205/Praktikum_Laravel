@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'show'])
         ->parameters(['surat-masuk' => 'id']);
 
-});
+        });
 
 //Route::resource('surat-masuk', SuratMasukController::class)->parameters(['surat-masuk' => 'id']);
 Route::resource('surat-keluar', SuratKeluarController::class)->parameters(['surat-keluar' => 'id']);
