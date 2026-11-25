@@ -3,10 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OutcomingLetters extends Model
 {
+    protected $table = 'outcoming_letters';
+
     protected $fillable = [
-        'nomor_surat', 'tanggal', 'pengirim', 'perihal', 'keterangan',
+        'nomor_surat',
+        'tanggal',
+        'pengirim',
+        'perihal',
+        'keterangan',
+        'category_id',
+        'lampiran',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
